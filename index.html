@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Spendikkoo is a private, browser-based financial activity dashboard.">
+    <meta name="color-scheme" content="light dark">
+    <title>Spendikkoo · Financial Command Center</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='9' y='9' width='46' height='46' rx='14' transform='rotate(45 32 32)' fill='%234f46e5'/%3E%3Cpath d='M15 42c12-1 21-7 31-20l4 11-11-1C31 41 24 45 15 46z' fill='%2399f6e4'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#dashboard">Skip to dashboard</a>
+
+    <header class="app-navbar">
+      <a class="brand-lockup" href="#dashboard" aria-label="Spendikkoo dashboard">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <defs>
+              <linearGradient id="logoDiamond" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#2563eb"></stop>
+                <stop offset="0.52" stop-color="#4f46e5"></stop>
+                <stop offset="1" stop-color="#312e81"></stop>
+              </linearGradient>
+              <linearGradient id="logoAurora" x1="14" y1="45" x2="51" y2="22" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#67e8f9"></stop>
+                <stop offset="1" stop-color="#a7f3d0"></stop>
+              </linearGradient>
+            </defs>
+            <rect x="8" y="8" width="48" height="48" rx="15" transform="rotate(45 32 32)" fill="url(#logoDiamond)"></rect>
+            <path d="M13 43c13.6-1.2 23.6-7.8 34.5-22.2l3.8 12.8-12.4-1.8C31.6 40.3 23.5 45 13 46.1Z" fill="url(#logoAurora)"></path>
+            <path d="m22.5 17.5 2 4 4 2-4 2-2 4-2-4-4-2 4-2Z" fill="#d1fae5"></path>
+          </svg>
+        </span>
+        <span>
+          <strong>Spendikkoo</strong>
+          <small>Financial command center</small>
+        </span>
+      </a>
+
+      <label class="global-search" for="searchQuery">
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m16 16 4 4"></path>
+        </svg>
+        <input id="searchQuery" type="search" placeholder="Search transactions" autocomplete="off">
+        <kbd>Cmd+K</kbd>
+      </label>
+
+      <div class="navbar-controls" aria-label="Dashboard controls">
+        <label class="visually-hidden" for="timeframeSelect">Reporting period</label>
+        <select id="timeframeSelect" aria-label="Reporting period">
+          <option value="month">This Month</option>
+          <option value="30d">Last 30 Days</option>
+          <option value="ytd">Year to Date</option>
+        </select>
+
+        <span id="calendarBadge" class="calendar-badge" aria-label="Current reporting date">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z"></path>
+          </svg>
+          <span id="calendarBadgeText">Current month</span>
+        </span>
+
+        <button id="exportBtn" class="button button-primary" type="button">
+          <svg aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"></path>
+          </svg>
+          Export Data
+        </button>
+
+        <button id="themeToggleBtn" class="icon-button" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+          <svg class="theme-icon theme-icon-sun" aria-hidden="true" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
+          <svg class="theme-icon theme-icon-moon" aria-hidden="true" viewBox="0 0 24 24">
+            <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="dashboard" class="dashboard-viewport" tabindex="-1">
+      <section class="dashboard-intro" aria-labelledby="dashboardTitle">
+        <div>
+          <p class="eyebrow">Financial pulse</p>
+          <h1 id="dashboardTitle">Your money, in motion.</h1>
+          <p>Track liquidity, understand allocation, and keep every transaction within reach.</p>
+        </div>
+        <div class="balance-chip">
+          <span>Net position</span>
+          <strong id="kpiBalance">$0.00</strong>
+        </div>
+      </section>
+
+      <section class="grid-metrics-row" aria-label="Cashflow overview">
+        <article class="metric-card metric-card-inflow">
+          <header class="metric-card-header">
+            <span class="metric-icon metric-icon-inflow" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 19V5m0 0L7 10m5-5 5 5"></path></svg>
+            </span>
+            <button class="ghost-menu" type="button" aria-label="Inflow options">•••</button>
+          </header>
+          <p class="metric-label">Total Inflow</p>
+          <p id="kpiIncome" class="metric-value">$0.00</p>
+          <div class="metric-footer">
+            <span id="incomeDelta" class="delta-pill delta-positive">▲ +14.2% vs last cycle</span>
+            <canvas id="inflowSparkline" class="sparkline" role="img" aria-label="Inflow trend"></canvas>
+          </div>
+        </article>
+
+        <article class="metric-card metric-card-outflow">
+          <header class="metric-card-header">
+            <span class="metric-icon metric-icon-outflow" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 5v14m0 0 5-5m-5 5-5-5"></path></svg>
+            </span>
+            <button class="ghost-menu" type="button" aria-label="Outflow options">•••</button>
+          </header>
+          <p class="metric-label">Total Outflow</p>
+          <p id="kpiExpense" class="metric-value">$0.00</p>
+          <div class="metric-footer">
+            <span id="expenseDelta" class="delta-pill delta-positive">▼ -3.1% pacing</span>
+            <canvas id="outflowSparkline" class="sparkline" role="img" aria-label="Outflow trend"></canvas>
+          </div>
+        </article>
+
+        <article class="card-virtual-obsidian" aria-label="Aurora Black virtual card">
+          <span class="card-orbit card-orbit-one" aria-hidden="true"></span>
+          <span class="card-orbit card-orbit-two" aria-hidden="true"></span>
+          <header>
+            <div>
+              <span class="card-kicker">Virtual debit</span>
+              <h2>Aurora Black</h2>
+            </div>
+            <svg class="contactless-icon" aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M8 9.5a4 4 0 0 1 0 5m3-8a8 8 0 0 1 0 11m3-14a12 12 0 0 1 0 17"></path>
+            </svg>
+          </header>
+          <div class="card-chip" aria-hidden="true"><span></span><span></span><span></span></div>
+          <p class="card-number">•••• •••• •••• 8821</p>
+          <footer>
+            <div class="card-owner-row">
+              <span><small>Cardholder</small><strong>VALUED CLIENT</strong></span>
+              <span class="card-monogram" aria-hidden="true">SA</span>
+            </div>
+            <div id="cardSpendingText" class="budget-copy">
+              <span id="monthlyLimit">Monthly Limit: $0.00</span>
+              <span id="budgetUsed">Used: 0%</span>
+            </div>
+            <div class="card-progress" role="progressbar" aria-label="Monthly budget used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="cardProgressFill"></span>
+            </div>
+          </footer>
+        </article>
+      </section>
+
+      <section class="grid-analytics-row" aria-label="Financial analytics">
+        <article class="dashboard-panel panel-trajectory">
+          <header class="panel-header">
+            <div>
+              <p class="eyebrow">Cashflow intelligence</p>
+              <h2>Liquidity &amp; Spending Trajectory</h2>
+            </div>
+            <div class="panel-tools">
+              <div id="chartRangeTabs" class="range-tabs" role="group" aria-label="Chart range">
+                <button type="button" data-months="3">3M</button>
+                <button type="button" data-months="6" class="active" aria-pressed="true">6M</button>
+                <button type="button" data-months="12">12M</button>
+              </div>
+              <button id="trajectoryFilterBtn" class="filter-toggle" type="button" aria-pressed="true">
+                <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10m-7 6h4"></path></svg>
+                Compare
+              </button>
+            </div>
+          </header>
+          <div class="chart-key" aria-hidden="true">
+            <span><i class="key-dot key-income"></i>Income</span>
+            <span><i class="key-dot key-expense"></i>Expenses</span>
+          </div>
+          <div class="trajectory-canvas-wrap">
+            <canvas id="trajectoryCanvas" role="img" aria-describedby="trajectoryDescription"></canvas>
+            <div id="canvasTooltip" class="canvas-tooltip hidden" aria-hidden="true"></div>
+          </div>
+          <p id="trajectoryDescription" class="visually-hidden">No monthly cashflow data is available.</p>
+        </article>
+
+        <article class="dashboard-panel panel-allocation">
+          <header class="panel-header">
+            <div>
+              <p class="eyebrow">Portfolio view</p>
+              <h2>Capital Allocation</h2>
+              <p class="panel-subtitle">Categorical spend analysis</p>
+            </div>
+            <span class="allocation-badge">Live</span>
+          </header>
+          <p id="allocationTotal" class="allocation-total">$0.00</p>
+          <p class="allocation-caption">Total categorized outflow</p>
+          <div id="spectrumLineBar" class="spectrum-line" aria-label="Expense allocation spectrum"></div>
+          <div id="categoryLegendList" class="category-legend-list">
+            <div class="allocation-empty">Add an expense to reveal your allocation mix.</div>
+          </div>
+        </article>
+      </section>
+
+      <section class="dashboard-panel grid-ledger-row" aria-labelledby="ledgerTitle">
+        <header class="ledger-header">
+          <div>
+            <p class="eyebrow">Transaction stream</p>
+            <div class="ledger-title-line">
+              <h2 id="ledgerTitle">Activity Ledger</h2>
+              <span id="recordCounter" class="record-counter">0 records</span>
+            </div>
+          </div>
+          <div class="ledger-controls">
+            <div id="filterType" class="filter-pills" role="group" aria-label="Filter by transaction type">
+              <button type="button" data-filter-type="all" class="active" aria-pressed="true">All</button>
+              <button type="button" data-filter-type="income" aria-pressed="false">Income</button>
+              <button type="button" data-filter-type="expense" aria-pressed="false">Expense</button>
+            </div>
+            <label class="visually-hidden" for="filterCategory">Filter by category</label>
+            <select id="filterCategory"><option value="all">All categories</option></select>
+            <label class="visually-hidden" for="pageSizeSelect">Items per page</label>
+            <select id="pageSizeSelect" aria-label="Items per page">
+              <option value="10">10 / page</option>
+              <option value="25">25 / page</option>
+              <option value="50">50 / page</option>
+            </select>
+            <label id="importBtn" class="icon-button import-button" for="csvFileInput" title="Import CSV">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 20h14"></path></svg>
+              <span class="visually-hidden">Import CSV</span>
+            </label>
+          </div>
+        </header>
+
+        <div class="ledger-table-wrapper">
+          <table id="transactionsTable">
+            <caption class="visually-hidden">Income and expense activity ledger</caption>
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Description</th>
+                <th scope="col">Category</th>
+                <th scope="col">Type</th>
+                <th scope="col" class="numeric">Amount</th>
+                <th scope="col"><span class="visually-hidden">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyStateView" class="empty-state-view">
+          <span class="empty-state-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7h16v12H4zM8 4h8v3M8 12h8"></path></svg>
+          </span>
+          <strong>Your ledger is ready</strong>
+          <p>Add a transaction or import a CSV file to begin.</p>
+        </div>
+
+        <footer class="ledger-footer">
+          <span id="ledgerVisibleTotal">Visible net: $0.00</span>
+          <nav class="pagination" aria-label="Ledger pagination">
+            <button id="prevPage" type="button" disabled aria-label="Previous page">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+            </button>
+            <span id="pageStatus" aria-live="polite">Page 1 of 1</span>
+            <button id="nextPage" type="button" disabled aria-label="Next page">
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"></path></svg>
+            </button>
+          </nav>
+        </footer>
+      </section>
+    </main>
+
+    <button id="mainFabBtn" class="main-fab" type="button" aria-label="Add transaction" aria-haspopup="dialog" aria-expanded="false">
+      <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg>
+    </button>
+
+    <div id="transactionModal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalDescription" hidden>
+      <section id="modalWindow" class="modal-card" tabindex="-1">
+        <header class="modal-header">
+          <div>
+            <p class="eyebrow">Ledger entry</p>
+            <h2 id="modalTitle">Add transaction</h2>
+            <p id="modalDescription">Record a movement with exact cent-level precision.</p>
+          </div>
+          <button id="closeModalBtn" class="icon-button" type="button" aria-label="Close dialog">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+          </button>
+        </header>
+
+        <form id="txForm" novalidate>
+          <fieldset class="form-field" aria-describedby="typeError">
+            <legend>Transaction type</legend>
+            <div class="segmented-type">
+              <label><input type="radio" name="entryType" value="expense" required><span>Expense</span></label>
+              <label><input type="radio" name="entryType" value="income" required><span>Income</span></label>
+            </div>
+            <span id="typeError" class="form-error-msg" aria-live="polite"></span>
+          </fieldset>
+
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="txAmount">Amount ($)</label>
+              <div class="amount-input-wrap"><span aria-hidden="true">$</span><input id="txAmount" name="amount" type="number" min="0.01" step="0.01" inputmode="decimal" aria-describedby="amountError" required></div>
+              <span id="amountError" class="form-error-msg" aria-live="polite"></span>
+            </div>
+            <div class="form-field">
+              <label for="txDate">Date</label>
+              <input id="txDate" name="date" type="date" aria-describedby="dateError" required>
+              <span id="dateError" class="form-error-msg" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="txCategory">Category</label>
+            <select id="txCategory" name="category" aria-describedby="categoryError" required><option value="">Select a category</option></select>
+            <span id="categoryError" class="form-error-msg" aria-live="polite"></span>
+          </div>
+
+          <div class="form-field">
+            <label for="txDesc">Description</label>
+            <input id="txDesc" name="description" type="text" maxlength="160" autocomplete="off" placeholder="What was this transaction for?" aria-describedby="descError" required>
+            <span id="descError" class="form-error-msg" aria-live="polite"></span>
+          </div>
+
+          <footer class="modal-actions">
+            <button id="cancelModalBtn" class="button button-secondary" type="button">Cancel</button>
+            <button class="button button-primary" type="submit">Save transaction</button>
+          </footer>
+        </form>
+      </section>
+    </div>
+
+    <div id="toastRack" class="toast-rack" role="alert" aria-live="assertive" aria-atomic="true"></div>
+    <input id="csvFileInput" class="visually-hidden" type="file" accept=".csv,text/csv">
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
