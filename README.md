@@ -28,16 +28,7 @@ Open [http://localhost:8000](http://localhost:8000).
 
 The interface uses semantic HTML, modern CSS Grid and Flexbox, native ES modules, and HTML canvas charts. `app.js` coordinates state and rendering, `analytics.js` owns financial calculations and CSV handling, and `storage.js` isolates persistence concerns.
 
-The result is a small static application that can be understood, tested, and deployed without a build step.
-
-## Test it
-
-```sh
-node tests/runner.js
-node tests/frontend-verifier.js
-```
-
-The tests cover numerical precision, CSV edge cases, UUID generation, browser interactions, accessibility, persistence failures, pagination, and 50,000-record performance.
+The result is a small static application that can be understood and deployed without a build step.
 
 ## Deploy
 
